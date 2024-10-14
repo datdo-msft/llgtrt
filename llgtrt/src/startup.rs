@@ -211,6 +211,7 @@ pub async fn run_server(cli_config: Config) -> anyhow::Result<()> {
         .route("/v1/completions", post(routes::route_completions))
         .route("/v1/chat/completions", post(routes::route_chat_completions))
         .route("/health_check", get(routes::route_health_check))
+        .route("/health/live", get(routes::route_live_check))
         .route("/v1/run", post(routes::route_llguidance))
         .route("/guidance", post(routes::route_llguidance))
         .with_state(Arc::new(state))

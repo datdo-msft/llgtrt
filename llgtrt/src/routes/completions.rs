@@ -300,6 +300,27 @@ pub async fn route_chat_completions(
     mk_req_info(&app_state, tokens, &request.params, true, false).await
 }
 
+pub async fn route_live_check(
+    _headers: HeaderMap,
+    State(app_state): State<Arc<AppState>>
+) -> Result<Response, AppError> {
+    let chat_history = "Hi".to_string();
+    log::debug!("[route_live_check] chat history after formatting:\n{:?}", chat_history);
+
+    let tokens = app_state.tokenize_with_bos(&chat_history);
+    log::debug!("[route_live_check] {}", app_state.tok_env.tok_trie().tokens_dbg(&tokens));
+
+    let mut common: CommonCreateParams = serde_json::from_value(json!({
+        "model": "model"
+    }))?;
+    common.max_tokens = 5;
+
+    let resp = mk_req_info(&app_state, tokens, &common, true, false).await?;
+
+    log::info!("[route_live_check] Liveness check response: {:?}", resp);
+    (resp.status(), "Check complete").into_response()
+}
+
 fn valid_utf8_len(data: &Vec<u8>) -> usize {
     if data.is_empty() {
         return 0;
