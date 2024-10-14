@@ -1,9 +1,9 @@
 #ifndef TLC_H
 #define TLC_H
 
-#include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -96,6 +96,7 @@ extern "C"
         float frequency_penalty;
         float presence_penalty;
         uint32_t top_k;
+        uint32_t min_tokens;
         uint64_t seed;
     } TlcRequestParams;
 

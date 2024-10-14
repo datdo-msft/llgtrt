@@ -96,6 +96,7 @@ fn req_params_from_openai(params: &CommonCreateParams) -> Result<RequestParams> 
         num_return_sequences: params.n as u32,
         frequency_penalty: params.frequency_penalty,
         presence_penalty: params.presence_penalty,
+        min_tokens: params.min_tokens as u32,
         ..Default::default()
     };
 

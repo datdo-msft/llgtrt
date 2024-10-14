@@ -1,7 +1,7 @@
+#include <cassert>
+#include <cmath>
 #include <stdexcept>
 #include <string>
-#include <cmath>
-#include <cassert>
 
 #include "tensorrt_llm/common/logger.h"
 #include "tensorrt_llm/executor/executor.h"
@@ -145,6 +145,8 @@ TlcStatus tlc_enqueue_request(TlcExecutor* ctx, TlcRequest const* request, TlcRe
             samplingConfig.setSeed(p.seed);
         if (p.top_k != 0)
             samplingConfig.setTopK(p.top_k);
+	if (p.min_tokens != 0)
+            samplingConfig.setMinTokens(p.min_tokens);
 
         tle::VecTokens tokens(request->tokens, request->tokens + request->num_tokens);
         tle::Request req(std::move(tokens), p.max_new_tokens, p.streaming, samplingConfig, outputConfig);
