@@ -29,14 +29,14 @@ fn chat_to_json(message: &ChatCompletionMessageParams) -> Value {
         ChatCompletionMessageParams::System { content, name } => {
             json!({
                 "role": "system",
-                "content": content,
+                "content": content.to_string(),
                 "name": name,
             })
         }
         ChatCompletionMessageParams::User { content, name } => {
             json!({
                 "role": "user",
-                "content": content,
+                "content": content.to_string(),
                 "name": name,
             })
         }
@@ -44,13 +44,13 @@ fn chat_to_json(message: &ChatCompletionMessageParams) -> Value {
             json!({
                 "role": "assistant",
                 "name": name,
-                "content": content,
+                "content": content.to_string(),
             })
         }
         ChatCompletionMessageParams::Tool { content, .. } => {
             json!({
                 "role": "tool",
-                "content": content,
+                "content": content.to_string(),
             })
         }
     }

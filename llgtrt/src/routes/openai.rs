@@ -161,20 +161,20 @@ fn default_min_tokens() -> usize {
 #[serde(tag = "role", rename_all = "lowercase")]
 pub enum ChatCompletionMessageParams {
     System {
-        content: String,
+        content: serde_json::Value,
         name: Option<String>,
     },
     User {
-        content: String,
+        content: serde_json::Value,
         name: Option<String>,
     },
     Assistant {
-        content: String,
+        content: serde_json::Value,
         name: Option<String>,
         tool_calls: Option<Vec<serde_json::Value>>,
     },
     Tool {
-        content: String,
+        content: serde_json::Value,
         tool_call_id: String,
     },
 }
