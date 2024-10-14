@@ -313,12 +313,12 @@ pub async fn route_live_check(
     let mut common: CommonCreateParams = serde_json::from_value(json!({
         "model": "model"
     }))?;
-    common.max_tokens = 5;
+    common.max_tokens = Some(5);
 
     let resp = mk_req_info(&app_state, tokens, &common, true, false).await?;
 
     log::info!("[route_live_check] Liveness check response: {:?}", resp);
-    (resp.status(), "Check complete").into_response()
+    Ok((resp.status(), "Check complete").into_response())
 }
 
 fn valid_utf8_len(data: &Vec<u8>) -> usize {
