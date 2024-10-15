@@ -1,4 +1,4 @@
-use crate::routes::openai::ChatCompletionMessageParams;
+use crate::routes::openai::{ChatCompletionMessageContentPart, ChatCompletionMessageParams};
 use liquid::{ParserBuilder, Template};
 use serde_json::{json, Value};
 
@@ -29,14 +29,14 @@ fn chat_to_json(message: &ChatCompletionMessageParams) -> Value {
         ChatCompletionMessageParams::System { content, name } => {
             json!({
                 "role": "system",
-                "content": content.to_string(),
+                "content": content_to_string(content),
                 "name": name,
             })
         }
         ChatCompletionMessageParams::User { content, name } => {
             json!({
                 "role": "user",
-                "content": content.to_string(),
+                "content": content_to_string(content),
                 "name": name,
             })
         }
@@ -44,14 +44,23 @@ fn chat_to_json(message: &ChatCompletionMessageParams) -> Value {
             json!({
                 "role": "assistant",
                 "name": name,
-                "content": content.to_string(),
+                "content": content_to_string(content),
             })
         }
         ChatCompletionMessageParams::Tool { content, .. } => {
             json!({
                 "role": "tool",
-                "content": content.to_string(),
+                "content": content_to_string(content),
             })
         }
+    }
+}
+
+fn content_to_string(content: &ChatCompletionMessageContentPart) -> String {
+    match content {
+        ChatCompletionMessageContentPart::Text(text) => text.clone(),
+        ChatCompletionMessageContentPart::ContentParts(content_parts) => {
+            content_parts.iter().map(|s| s.text.clone()).collect::<Vec<String>>().join("\n").to_string()
+        },
     }
 }
