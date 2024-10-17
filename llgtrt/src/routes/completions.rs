@@ -311,13 +311,12 @@ pub async fn route_live_check(
     let tokens = app_state.tokenize_with_bos(&chat_history);
     log::debug!("[route_live_check] {}", app_state.tok_env.tok_trie().tokens_dbg(&tokens));
 
-    let params = CommonCreateParams {
-        model: "model".to_string(),
-        max_tokens: Some(2),
-        ..Default::default()
-    };
+    let mut common: CommonCreateParams = serde_json::from_value(json!({
+        "model": "model"
+    }))?;
+    common.max_tokens = Some(5);
 
-    let resp = mk_req_info(&app_state, tokens, &params, true, false).await?;
+    let resp = mk_req_info(&app_state, tokens, &common, true, false).await?;
 
     log::info!("[route_live_check] Liveness check response: {:?}", resp);
     Ok((resp.status(), "Check complete").into_response())
