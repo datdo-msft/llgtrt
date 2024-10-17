@@ -27,6 +27,9 @@ async fn main() -> anyhow::Result<()> {
         }
     }
 
+    // Enable debug logs for TRT-LLM by default
+    env::set_var("TLLM_LOG_LEVEL", "DEBUG");
+
     llgtrt::logging::init_log(llgtrt::logging::LogMode::Normal)?;
 
     log::info!(

@@ -270,7 +270,8 @@ pub async fn route_completions(
     State(app_state): State<Arc<AppState>>,
     request: Json<CompletionCreateParams>,
 ) -> Result<Response, AppError> {
-    log::info!("request: {:?}", request);
+    log::info!("Received completion request");
+    log::debug!("request: {:?}", request);
 
     if let Err(e) = validate_compl(&request) {
         return Err(e.into());
@@ -285,7 +286,8 @@ pub async fn route_chat_completions(
     State(app_state): State<Arc<AppState>>,
     request: Json<ChatCompletionCreateParams>,
 ) -> Result<Response, AppError> {
-    log::info!("chat request: {:?}", request);
+    log::info!("Received chat completion request");
+    log::debug!("chat request: {:?}", request);
 
     if let Err(e) = validate_chat(&request) {
         return Err(e.into());
@@ -301,7 +303,6 @@ pub async fn route_chat_completions(
 }
 
 pub async fn route_live_check(
-    _headers: HeaderMap,
     State(app_state): State<Arc<AppState>>
 ) -> Result<Response, AppError> {
     let chat_history = "Hi".to_string();
@@ -310,12 +311,13 @@ pub async fn route_live_check(
     let tokens = app_state.tokenize_with_bos(&chat_history);
     log::debug!("[route_live_check] {}", app_state.tok_env.tok_trie().tokens_dbg(&tokens));
 
-    let mut common: CommonCreateParams = serde_json::from_value(json!({
-        "model": "model"
-    }))?;
-    common.max_tokens = Some(5);
+    let params = CommonCreateParams {
+        model: "model".to_string(),
+        max_tokens: Some(2),
+        ..Default::default()
+    };
 
-    let resp = mk_req_info(&app_state, tokens, &common, true, false).await?;
+    let resp = mk_req_info(&app_state, tokens, &params, true, false).await?;
 
     log::info!("[route_live_check] Liveness check response: {:?}", resp);
     Ok((resp.status(), "Check complete").into_response())
@@ -653,7 +655,8 @@ pub async fn route_llguidance(
     State(app_state): State<Arc<AppState>>,
     request: Json<RunRequest>,
 ) -> Result<Response, AppError> {
-    log::info!("run request: {:?}", request);
+    log::info!("Received run request");
+    log::debug!("run request: {:?}", request);
 
     let mut common: CommonCreateParams = serde_json::from_value(json!({
         "model": "model"
